@@ -869,7 +869,7 @@ class Attachment(object):
         filename, targetfile = self._create_unique_file(dir, filename)
         with targetfile:
             with self.env.db_transaction as db:
-                db("INSERT INTO attachment VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",
+                db("INSERT INTO attachment VALUES (%s,%s,%s,%s,%s,%s,%s)",
                    (self.parent_realm, self.parent_id, filename, self.size,
                     to_utimestamp(t), self.description, self.author))
                 shutil.copyfileobj(fileobj, targetfile)
