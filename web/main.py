@@ -36,7 +36,6 @@ from urlparse import urlparse
 from genshi.builder import tag
 from genshi.output import DocType
 from genshi.template import TemplateLoader
-
 from trac import __version__ as TRAC_VERSION
 from trac.config import BoolOption, ChoiceOption, ConfigurationError, \
                         ExtensionOption, Option, OrderedExtensionsOption
@@ -293,8 +292,13 @@ class RequestDispatcher(Component):
                             env=None, data=TracNotImplementedError(e), status=500)
             if isinstance(e, TracError):
                 #raise HTTPInternalError(e)
-                req.send_error(None, template='', content_type='text/plain',
-                            env=None, data=e, status=500)
+                tb = traceback.extract_tb(err[2])[-1]
+                self.log.debug("RequestDispatcher:%s caught from %s:%d in %s: %s",
+                        e.__class__.__name__, tb[0], tb[1], tb[2],
+                        to_unicode(e) or "(no message)")
+                req.send_error(None, template='', content_type='text/html',
+                            env=self.env, data=TracError(e, show_traceback=True), status=500)
+
             raise err[0], err[1], err[2]
 
     # ITemplateProvider methods
