@@ -332,7 +332,7 @@ class WikiModule(Component):
                 author = get_reporter_id(req)
                 comment = u'[wiki:"%s@%d" %s] \u2192 [wiki:"%s"].' % (
                           new_name, old_version, old_name, new_name)
-                redirection.save(author, comment, req.remote_addr)
+                redirection.save(author, comment)
 
         add_notice(req, _("The page %(old_name)s has been renamed to "
                           "%(new_name)s.", old_name=old_name,
@@ -356,8 +356,7 @@ class WikiModule(Component):
             page.readonly = int('readonly' in req.args)
 
         try:
-            page.save(get_reporter_id(req, 'author'), req.args.get('comment'),
-                      req.remote_addr)
+            page.save(get_reporter_id(req, 'author'), req.args.get('comment'))
         except TracError:
             add_warning(req, _("Page not modified, showing latest version."))
             return self._render_view(req, page)
